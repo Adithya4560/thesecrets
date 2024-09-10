@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Transformation Magic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body { 
+            text-align: center; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden;
+            height: 100vh;
+            background-color: #000000; /* Black background */
+            position: relative;
+            border-radius: 20px; /* Rounded corners for body */
+            overflow: hidden; /* Hide overflow for rounded corners */
+            backdrop-filter: blur(10px); /* Fog-like effect */
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.4); /* Brighter circle background */
+            box-shadow: 0 0 80px 40px rgba(255, 255, 255, 0.4); /* Brighter shadow for blur effect */
+            filter: blur(8px); /* Blurred effect */
+        }
+
+        h1 { 
+            font-size: 3em; 
+            color: white; /* Text color */
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            display: inline-block;
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0; /* Initially hidden */
+            animation: fadeInOut 3s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        label { 
+            display: block; 
+            margin: 10px auto; 
+            width: 80%; 
+            max-width: 400px; 
+            font-weight: bold; 
+            color: #4e6580; /* Text color */
+        }
+
+        input, select { 
+            display: block; 
+            margin: 10px auto; 
+            width: 80%; 
+            max-width: 400px; 
+            padding: 10px; 
+            border: 1px solid #444; /* Dark border for contrast */
+            border-radius: 5px; 
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.2); /* Lighter shadow for dark background */
+            transition: box-shadow 0.2s; 
+            font-family: 'Inter', sans-serif;
+            background-color: #222; /* Dark background for inputs and selects */
+            color: #fff; /* White text for inputs and selects */
+        }
+
+        input:focus, select:focus { 
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+            border-color: #007BFF; 
+        }
+
+        button { 
+            padding: 10px 20px; 
+            background-color: #007BFF; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: background-color 0.2s, box-shadow 0.2s; 
+            font-family: 'Inter', sans-serif;
+            margin: 10px;
+        }
+
+        button:hover { 
+            background-color: #0056b3; 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+        }
+
+        #output { 
+            margin-top: 20px; 
+            font-family: 'Inter', sans-serif;
+            word-wrap: break-word;
+            color: #4e6580; /* Text color */
+        }
+
+        .container { 
+            position: relative;
+            background: rgba(255, 255, 255, 0.6); /* Increased transparency */
+            border-radius: 20px; /* Rounded corners for container */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            z-index: 1;
+            margin: 20px auto;
+            width: 90%; 
+            max-width: 800px; 
+            padding: 20px; /* Padding for inner content */
+        }
+
+        .container:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+        }
+    </style>
+</head>
+<body>
+    <div id="circle1" class="circle"></div>
+    <div id="circle2" class="circle"></div>
+    <div id="circle3" class="circle"></div>
+
+    <div class="container">
+        <h1 id="main-title">
+            <span class="letter">T</span>
+            <span class="letter">e</span>
+            <span class="letter">x</span>
+            <span class="letter">t</span>
+            <span class="letter"> </span>
+            <span class="letter">T</span>
+            <span class="letter">r</span>
+            <span class="letter">a</span>
+            <span class="letter">n</span>
+            <span class="letter">s</span>
+            <span class="letter">f</span>
+            <span class="letter">o</span>
+            <span class="letter">r</span>
+            <span class="letter">m</span>
+            <span class="letter">a</span>
+            <span class="letter">t</span>
+            <span class="letter">i</span>
+            <span class="letter">o</span>
+            <span class="letter">n</span>
+            <span class="letter"> </span>
+            <span class="letter">M</span>
+            <span class="letter">a</span>
+            <span class="letter">g</span>
+            <span class="letter">i</span>
+            <span class="letter">c</span>
+        </h1>
+        <label for="text">Enter the Text</label>
+        <input type="text" id="text" placeholder="Enter the text here">
+        <label for="shift" id="shift_label">Enter Shift</label>
+        <input type="number" id="shift" placeholder="Enter shift value">
+        <label for="action">Select Action</label>
+        <select id="action" onchange="toggleShiftInput()">
+            <option value="encrypt">Encrypt</option>
+            <option value="decrypt">Decrypt</option>
+        </select>
+        <button onclick="processText()">Convert</button>
+        <div id="output"></div>
+        <div class="slider-container" id="slider-container" style="display: none;">
+            <input type="range" min="0" max="25" value="0" class="slider" id="shiftSlider" oninput="updateDecryptionOutput()">
+        </div>
+        <button onclick="copyText()">Copy Output</button>
+    </div>
+
+    <script>
+        const circles = [
+            document.getElementById('circle1'),
+            document.getElementById('circle2'),
+            document.getElementById('circle3')
+        ];
+
+        const directions = [
+            { x: 1, y: 1 },
+            { x: -1, y: 1 },
+            { x: 1, y: -1 }
+        ];
+
+        function getRandomColor() {
+            const colors = ['rgba(255, 105, 180, 0.4)', 'rgba(0, 191, 255, 0.4)', 'rgba(255, 215, 0, 0.4)'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function animateCircles() {
+            circles.forEach((circle, index) => {
+                let posX = Math.random() * window.innerWidth;
+                let posY = Math.random() * window.innerHeight;
+                let dirX = directions[index].x;
+                let dirY = directions[index].y;
+
+                function move() {
+                    const rect = circle.getBoundingClientRect();
+
+                    if (rect.left + dirX < 0 || rect.right + dirX > window.innerWidth) {
+                        dirX *= -1;
+                    }
+                    if (rect.top + dirY < 0 || rect.bottom + dirY > window.innerHeight) {
+                        dirY *= -1;
+                    }
+
+                    posX += dirX;
+                    posY += dirY;
+
+                    circle.style.left = `${posX}px`;
+                    circle.style.top = `${posY}px`;
+
+                    if (Math.random() < 0.01) {
+                        circle.style.background = getRandomColor();
+                    }
+
+                    requestAnimationFrame(move);
+                }
+                move();
+            });
+        }
+
+        animateCircles();
+
+        function toggleShiftInput() {
+            const action = document.getElementById('action').value;
+            const shiftLabel = document.getElementById('shift_label');
+            const shiftInput = document.getElementById('shift');
+            const sliderContainer = document.getElementById('slider-container');
+            const title = document.getElementById('main-title');
+            if (action === 'decrypt') {
+                shiftLabel.style.display = 'none';
+                shiftInput.style.display = 'none';
+                sliderContainer.style.display = 'block';
+                title.innerText = 'Convert Secret to Your Language';
+                // Reapply letter span to new text
+                title.innerHTML = title.innerText.split('').map(letter => `<span class="letter">${letter}</span>`).join('');
+            } else {
+                shiftLabel.style.display = 'block';
+                shiftInput.style.display = 'block';
+                sliderContainer.style.display = 'none';
+                title.innerText = 'Writr the Secret';
+                // Reapply letter span to new text
+                title.innerHTML = title.innerText.split('').map(letter => `<span class="letter">${letter}</span>`).join('');
+            }
+            // Reapply the fade-in and fade-out animation
+            document.querySelectorAll('.letter').forEach((letter, index) => {
+                letter.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        function processText() {
+            const text = document.getElementById('text').value;
+            const action = document.getElementById('action').value;
+            let url = `/process/?text=${text}&action=${action}`;
+            if (action === 'encrypt') {
+                const shift = document.getElementById('shift').value;
+                url += `&shift=${shift}`;
+            }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const outputDiv = document.getElementById('output');
+                    outputDiv.innerHTML = '';
+                    if (action === 'encrypt') {
+                        outputDiv.innerText = `Encrypted Text is: ${data.processed_text}`;
+                    } else {
+                        possibleDecryptions = data.possible_decryptions;
+                        updateDecryptionOutput();
+                    }
+                });
+        }
+
+        function updateDecryptionOutput() {
+            const shift = document.getElementById('shiftSlider').value;
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerText = `Shift ${shift}: ${possibleDecryptions[shift]}`;
+        }
+
+        function copyText() {
+            const outputText = document.getElementById('output').innerText;
+            navigator.clipboard.writeText(outputText).then(() => {
+                alert('Output copied to clipboard');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        // Initialize the shift input visibility
+        toggleShiftInput();
+    </script>
+</body>
+</html>
